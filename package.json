@@ -1,12 +1,42 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build"
     },
     "devDependencies": {
-        "axios": "^1.1.2",
-        "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.0.0"
+        "@popperjs/core": "^2.11.6",
+        "@vitejs/plugin-react": "^4.2.0",
+        "axios": "^1.7.2",
+        "bootstrap": "^5.2.3",
+        "laravel-vite-plugin": "^1.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "sass": "^1.56.1",
+        "vite": "^5.0"
+    },
+    "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^43.2.0",
+        "@ckeditor/ckeditor5-react": "^9.3.0",
+        "@dropzone-ui/react": "github:dropzone-ui/react",
+        "@emotion/react": "^11.13.3",
+        "@emotion/styled": "^11.13.0",
+        "@inertiajs/inertia-react": "^0.8.1",
+        "@inertiajs/react": "^1.2.0",
+        "@mui/icons-material": "^5.15.20",
+        "@mui/material": "^5.16.7",
+        "@mui/x-data-grid": "^7.7.0",
+        "@vitejs/plugin-react": "^4.3.1",
+        "bootstrap": "^5.3.3",
+        "jodit-react": "^4.1.2",
+        "notyf": "^3.10.0",
+        "quill": "^2.0.2",
+        "react": "^18.3.1",
+        "react-bootstrap": "^2.10.2",
+        "react-dom": "^18.3.1",
+        "react-pro-sidebar": "^1.1.0",
+        "react-router-dom": "^6.27.0",
+        "sweetalert2": "^11.12.0"
     }
 }
