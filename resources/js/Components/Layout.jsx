@@ -54,43 +54,6 @@ function Layout({ children }) {
 								<MenuItem icon={<InventoryIcon />}>Sản phẩm</MenuItem>
 							</a>
 						</SubMenu>
-						<a href={"/contacts"}>
-							<MenuItem icon={<DialerSipIcon />}>Liên hệ</MenuItem>
-						</a>
-						<a href={"/bookings"}>
-							<MenuItem icon={<CalendarMonthIcon />}>Đặt lịch</MenuItem>
-						</a>
-						<a href={"/slides"}>
-							<MenuItem icon={<DriveFileMoveIcon />}>Slides</MenuItem>
-						</a>
-						<a href={"/sitemap"}>
-							<MenuItem icon={<MapIcon />}>Sitemap</MenuItem>
-						</a>
-						<a href={"/posts"}>
-							<MenuItem icon={<BookIcon />}>Bài viết</MenuItem>
-						</a>
-						<a href={"/comments"}>
-							<MenuItem icon={<CommentIcon />}>Bình luận</MenuItem>
-						</a>
-						<a href={"/bills"}>
-							<MenuItem icon={<CardTravelIcon />}>Hoá đơn</MenuItem>
-						</a>
-						<SubMenu label="Hóa Đơn dịch vụ" icon={<BrandingWatermarkIcon />}>
-							<a href={"/service-bills"}>
-								<MenuItem icon={<CategoryIcon />}>Hóa đơn</MenuItem>
-							</a>
-						</SubMenu>
-						<a href={"/campains"}>
-							<MenuItem icon={<CardTravelIcon />}>Chiến dịch</MenuItem>
-						</a>
-						<SubMenu label="Dịch vụ" icon={<BrandingWatermarkIcon />}>
-							<a href={"/service-collections"}>
-								<MenuItem icon={<DesignServicesTwoToneIcon />}>Nhóm Dịch vụ </MenuItem>
-							</a>
-							<a href={"/services"}>
-								<MenuItem icon={<DesignServicesTwoToneIcon />}>Dịch vụ </MenuItem>
-							</a>
-						</SubMenu>
 						<a href={"/logout"}>
 							<MenuItem icon={<LogoutIcon />}>Log out</MenuItem>
 						</a>
