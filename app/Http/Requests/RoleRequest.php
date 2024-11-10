@@ -29,14 +29,9 @@ class RoleRequest extends FormRequest
                'name'=>'required|unique:roles,name',
             ];
         } else if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $feature = Roles::where('id',$id)->first();
-            if (!$feature) {
-                throw new HttpResponseException(response()->json([
-                    'check' => false,
-                    'msg'   => 'Role id not found '.$id,
-                ], 200)); 
-            }
-            return [];
+            return [
+                'name'=>'required|unique:roles,name',
+             ];
         }else if ($this->isMethod('delete')) {
             $feature = Roles::find($id);
             if (!$feature) {
@@ -45,7 +40,7 @@ class RoleRequest extends FormRequest
                     'msg'   => 'Role id  not found',
                 ], 200)); 
             }
-            return [];
+
         }
         return [];
     }
@@ -55,6 +50,7 @@ class RoleRequest extends FormRequest
             'check' => false,
             'msg'  => $validator->errors()->first(),
             'errors'=>$validator->errors(),
+            'data'=>Roles::all()
         ], 200));
     }
 

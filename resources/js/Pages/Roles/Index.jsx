@@ -101,6 +101,8 @@ function Index({ roles }) {
            toast.error(res.data.msg, {
                                     position: "top-right"
                                 });
+          setData(res.data.data);
+
         }
       });
     }

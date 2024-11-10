@@ -4,55 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Roles;
 use App\Http\Requests\RoleRequest;
+use App\Traits\HasCrud;
 use Inertia\Inertia;
 
 class RolesController extends Controller
 {
-    /**
-     * Display a listing of roles.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
+    use HasCrud;
+
+    public function __construct()
     {
-        $roles = Roles::all();
-       return Inertia::render('Roles/Index', ['roles' => $roles]);
+        $this->model=Roles::class;
+        $this->view='Roles/Index';
+        $this->data=['roles'=>$this->model::all()];
+       
     }
 
-    /**
-     * Store a new role.
-     *
-     * @param  RoleRequest  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(RoleRequest $request)
-    {
-        return parent::store_ft($request, Roles::class);
-    }
-
-    /**
-     * Update an existing role.
-     *
-     * @param  RoleRequest  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // This will use the UserRequest for validation
     public function update(RoleRequest $request, $id)
     {
-        return parent::update_ft($request, Roles::class, $id);
-    }
-
-    /**
-     * Delete a role.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
-    {
-        $role = Roles::findOrFail($id);
-        $role->delete();
-
-        return response()->json(['message' => 'Role deleted successfully'], 200);
+       $data=$request->validated();
+       $data['updated_at']=now();
+        $this->model::find($id)->update($data);
+        $data=$this->model::all();
+        return response()->json(['check'=>true,'data'=>$data]);
     }
 }
