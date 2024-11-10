@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-
+use Illuminate\Support\Str;
 trait HasCrud
 {
     protected $model;
@@ -31,6 +31,9 @@ trait HasCrud
             $data = $request->validated();
         } else {
             $data = $request->all();
+        }
+        if (isset($data['name'])) {
+            $data['slug'] = Str::slug($data['name']);
         }
         $item = $this->model::create($data);
         $data = $this->model::all();
