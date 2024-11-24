@@ -185,7 +185,7 @@ class ImageController extends Controller
                         'message' => 'AI-generated image uploaded and successfully stored in Cloudflare',
                         'uid' => $uid,
                         'trans_id' => $transId,
-                        'cloudflare_link' => $cloudflareLink, // Cloudflare URL of the uploaded file
+                        'url' => $cloudflareLink, // Cloudflare URL of the uploaded file
                     ]);
                 } else {
                     // Handle error if transform API request fails
