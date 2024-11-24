@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrandsController;
+use App\Http\Controllers\KeyController;
 use App\Http\Controllers\RolesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,3 +19,4 @@ use Inertia\Inertia;
 
 Route::resource('roles', RolesController::class);
 Route::resource('brands', BrandsController::class);
+Route::resource('keys', KeyController::class);

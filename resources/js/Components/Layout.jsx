@@ -1,4 +1,4 @@
-/* eslint-disable */	
+/* eslint-disable */
 import React from "react";
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
@@ -54,11 +54,14 @@ function Layout({ children }) {
 								<MenuItem icon={<InventoryIcon />}>Sản phẩm</MenuItem>
 							</a>
 						</SubMenu>
+                        <a href={"/keys"}>
+							<MenuItem icon={<LogoutIcon />}>keys</MenuItem>
+						</a>
 						<a href={"/logout"}>
 							<MenuItem icon={<LogoutIcon />}>Log out</MenuItem>
 						</a>
 
-						{/*             
+						{/*
             <MenuItem icon={<ReceiptOutlinedIcon />}>Profile</MenuItem>
             <MenuItem icon={<HelpOutlineOutlinedIcon />}>FAQ</MenuItem>
             <MenuItem icon={<CalendarTodayOutlinedIcon />}>Calendar</MenuItem> */}
