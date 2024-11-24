@@ -21,11 +21,9 @@ class KeyController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
-
                 if (isset($data['data']['max_num'], $data['data']['used_num'])) {
                     $maxNum = (float) $data['data']['max_num'];
                     $usedNum = (float) $data['data']['used_num'];
-
                     if ($maxNum - $usedNum < 10) {
                         $key->delete();
                     }
