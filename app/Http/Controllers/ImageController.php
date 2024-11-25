@@ -21,6 +21,25 @@ class ImageController extends Controller
     public function __construct()
     {
         $keys = Key::where('api','vanceai')->get();
+        $keys1 = Key::where('api','picsart')->get();
+        foreach ($keys1 as $key) {
+            // Send a request to check the balance
+            $response = Http::withHeaders([
+                'X-Picsart-API-Key' => $key->token,
+                'Accept' => 'application/json',
+            ])->get('https://api.picsart.io/tools/1.0/balance');
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Check if the 'credits' value is less than 5
+                if (isset($data['credits']) && $data['credits'] < 5) {
+                    // Delete the key if credits are less than 5
+                    $key->delete();
+                }
+            }
+        }
+
         foreach ($keys as $key) {
             $response = Http::get("https://api-service.vanceai.com/web_api/v1/point", [
                 'api_token' => $key->token
@@ -37,8 +56,10 @@ class ImageController extends Controller
                 }
             }
         }
-        $result =  Key::orderBy('id', 'asc')->first()?->token;
+        $result =  Key::where('api','vanceai')->orderBy('id', 'asc')->first()?->token;
         $this->key=$result;
+        $result1 =  Key::where('api','picsart')->orderBy('id', 'asc')->first()?->token;
+        $this->picsart=$result1;
         $this->aws_secret_key = 'b52dcdbea046cc2cc13a5b767a1c71ea8acbe96422b3e45525d3678ce2b5ed3e';
         $this->aws_access_key = 'cbb3e2fea7c7f3e7af09b67eeec7d62c';
 

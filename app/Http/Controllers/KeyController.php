@@ -14,6 +14,24 @@ class KeyController extends Controller
     public function __construct()
     {
         $keys = Key::where('api','vanceai')->get();
+        $keys1 = Key::where('api','picsart')->get();
+        foreach ($keys1 as $key) {
+            // Send a request to check the balance
+            $response = Http::withHeaders([
+                'X-Picsart-API-Key' => $key->token,
+                'Accept' => 'application/json',
+            ])->get('https://api.picsart.io/tools/1.0/balance');
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Check if the 'credits' value is less than 5
+                if (isset($data['credits']) && $data['credits'] < 5) {
+                    // Delete the key if credits are less than 5
+                    $key->delete();
+                }
+            }
+        }
         foreach ($keys as $key) {
             $response = Http::get("https://api-service.vanceai.com/web_api/v1/point", [
                 'api_token' => $key->token
@@ -30,6 +48,7 @@ class KeyController extends Controller
                 }
             }
         }
+        dd($keys1);
     }
     /**
      * Display a listing of the resource.
