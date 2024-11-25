@@ -48,7 +48,6 @@ class KeyController extends Controller
                 }
             }
         }
-        dd($keys1);
     }
     /**
      * Display a listing of the resource.
