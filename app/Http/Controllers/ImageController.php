@@ -19,7 +19,7 @@ class ImageController extends Controller
     private $client;
     public function __construct()
     {
-        $keys = Key::all();
+        $keys = Key::where('api','vanceai')->get();
         foreach ($keys as $key) {
             $response = Http::get("https://api-service.vanceai.com/web_api/v1/point", [
                 'api_token' => $key->token
