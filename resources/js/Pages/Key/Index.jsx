@@ -95,11 +95,7 @@ function Index({ datakeys }) {
             axios.put(`/keys/${id}`, { [field]: value }).then((res) => {
                 if (res.data.check) {
                     toast.success("Chỉnh sửa thành công");
-                    setData((prevData) =>
-                        prevData.map((item) =>
-                            item.id === id ? { ...item, [field]: value } : item
-                        )
-                    );
+                   setData(res.data.data)
                 } else {
                     toast.error(res.data.msg);
                 }

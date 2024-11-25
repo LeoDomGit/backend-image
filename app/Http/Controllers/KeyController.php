@@ -80,6 +80,7 @@ class KeyController extends Controller
         $validatedData = $request->validate([
             'email' => 'nullable|string|',
             'token' => 'nullable|string|',
+            'api' => 'nullable|string|',
         ]);
 
         // Update the key with the new data if present
@@ -89,13 +90,15 @@ class KeyController extends Controller
         if ($request->has('token')) {
             $key->token = $request->token;
         }
-
+        if ($request->has('api')) {
+            $key->api = $request->api;
+        }
         // Save the updated key
         $key->save();
-
+        $data=Key::all();
         return response()->json([
             'check' => true,
-            'data' => $key
+            'data' => $data
         ], 200);
     }
 
