@@ -44,7 +44,7 @@ function Index({ datakeys }) {
         const formData = new FormData();
         formData.append("token", token);
         formData.append("email", email);
-        formData.append("api", email);
+        formData.append("api", api);
 
         axios
             .post("/keys", formData, {
