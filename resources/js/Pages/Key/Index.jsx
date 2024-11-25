@@ -57,6 +57,7 @@ function Index({ datakeys }) {
                     toast.success("Đã thêm thành công");
                     setData((prevData) => [...prevData, res.data.data]);
                     setToken("");
+                    setAPI("");
                     setEmail("");
                     setShow(false);
                 } else {
@@ -119,7 +120,7 @@ function Index({ datakeys }) {
                     />
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control mt-2"
                         placeholder="Nhập API..."
                         value={api}
                         onChange={(e) => setAPI(e.target.value)}

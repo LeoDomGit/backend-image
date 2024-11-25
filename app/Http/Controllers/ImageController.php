@@ -16,6 +16,7 @@ class ImageController extends Controller
     protected $key;
     private $aws_secret_key;
     private $aws_access_key;
+    protected $picsart;
     private $client;
     public function __construct()
     {
