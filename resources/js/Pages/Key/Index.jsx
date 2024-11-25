@@ -25,7 +25,7 @@ function Index({ datakeys }) {
         { field: "id", headerName: "#", width: 100 },
         { field: "token", headerName: "Token", width: 200, editable: true },
         { field: "email", headerName: "Email", width: 200, editable: true },
-        { field: "api", headerName: "API", width: 200, editable: false },
+        { field: "api", headerName: "API", width: 200, editable: true },
         {
             field: "created_at",
             headerName: "Created at",
