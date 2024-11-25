@@ -65,6 +65,17 @@ class ImageController extends Controller
 
         $this->client = new Client();
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function RemoveBackground(Request $request){
+        if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
+            return response()->json(['error' => 'No valid file uploaded'], 400);
+        }
+            
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -232,115 +243,6 @@ class ImageController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function removeBackground(Request $request){
-        // Validate if the file is uploaded and is valid
-        if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
-           return response()->json(['error' => 'No valid file uploaded'], 400);
-       }
-
-       // Get the uploaded file
-       $file = $request->file('image');
-
-       // Get the file path and original filename
-       $filename = time() . '_' . $file->getClientOriginalName();
-       $filePath = $file->getPathname();
-
-       // API Token (assuming it's set on $this->key)
-       $apiToken = $this->key;
-
-       // Make the request to the API to upload the image
-       $response = Http::attach('file', file_get_contents($filePath), $filename)
-           ->post('https://api-service.vanceai.com/web_api/v1/upload', [
-               'api_token' => $apiToken,
-           ]);
-
-       // Check if the request was successful
-       if ($response->successful()) {
-           // Get the response data
-           $data = $response->json();
-
-           // Retrieve the 'uid' from the response data
-           $uid = $data['data']['uid'];
-           $transformResponse = Http::post('https://api-service.vanceai.com/web_api/v1/transform', [
-               'api_token' => $this->key,  // Use your token here
-               'uid' => $uid,
-               'jconfig' => json_encode([
-                   'name' => 'img2anime',
-                   'config' => [
-                       'module' => 'img2anime',
-                       'module_params' => [
-                           'model_name' => 'style4',
-                           'prompt' => '',
-                           'overwrite' => false,
-                           'denoising_strength' => 0.75
-                       ]
-                   ]
-               ])
-           ]);
-
-           // Check if the transform request was successful
-           if ($transformResponse->successful()) {
-               // Get the response data from the transform API
-               $transformData = $transformResponse->json();
-               // dd($transformData)
-               $transId = $transformData['data']['trans_id'];
-
-               // Step 3: Request to download the transformed image using trans_id
-               $downloadResponse = Http::post('https://api-service.vanceai.com/web_api/v1/download', [
-                   'api_token' => $this->key,
-                   'trans_id' => $transId,
-               ]);
-
-               // Check if the download request was successful
-               if ($downloadResponse->successful()) {
-                   $fileContent = $downloadResponse->body();
-
-                   // Temporary local storage path for the image
-                   $filename = time() . '.jpg'; // Dynamic filename based on the current timestamp
-                   $storagePath = 'transformed_images/' . $filename;
-
-                   // Save the file temporarily to the local disk
-                   Storage::disk('public')->put($storagePath, $fileContent);
-
-                   // Define the folder in Cloudflare where the file will be uploaded
-                   $folder = 'uploadcartoon';
-
-                   // Full path of the local file to pass to Cloudflare upload
-                   $localFilePath = Storage::disk('public')->path($storagePath);
-
-                   // Upload the file to Cloudflare
-                   $cloudflareLink = $this->uploadToCloudFlareFromFile($localFilePath, $folder, $filename);
-
-                   // Delete the temporary local file
-                   Storage::disk('public')->delete($storagePath);
-
-                   // Return the response with details
-                   return response()->json([
-                       'message' => 'AI-generated image uploaded and successfully stored in Cloudflare',
-                       'uid' => $uid,
-                       'trans_id' => $transId,
-                       'url' => $cloudflareLink, // Cloudflare URL of the uploaded file
-                   ]);
-               } else {
-                   // Handle error if transform API request fails
-                   return response()->json(['error' => 'Failed to transform image'], 500);
-               }
-               // Return a success message with the UID
-               // return response()->json([
-               //     'message' => 'Image uploaded successfully',
-               //     'uid' => $uid,
-               //     'name' => $data['data']['name'],
-               //     'thumbnail' => $data['data']['thumbnail'],
-               //     'w' => $data['data']['w'],
-               //     'h' => $data['data']['h'],
-               //     'filesize' => $data['data']['filesize'],
-               // ]);
-           } else {
-               // Return an error if the API request failed
-               return response()->json(['error' => 'Failed to upload image'], 500);
-           }
-       }
-   }
    /**
     * Show the form for creating a new resource.
     */
