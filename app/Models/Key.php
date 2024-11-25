@@ -13,6 +13,7 @@ class Key extends Model
     protected $fillable = [
         'token',
         'email',
+        'api',
         'created_at',
         'updated_at'
     ];

@@ -13,6 +13,7 @@ function Index({ datakeys }) {
     const [data, setData] = useState(datakeys);
     const [token, setToken] = useState("");
     const [email, setEmail] = useState("");
+    const [api, setAPI] = useState("");
     const [show, setShow] = useState(false);
 
     const formatCreatedAt = (dateString) => {
@@ -24,6 +25,7 @@ function Index({ datakeys }) {
         { field: "id", headerName: "#", width: 100 },
         { field: "token", headerName: "Token", width: 200, editable: true },
         { field: "email", headerName: "Email", width: 200, editable: true },
+        { field: "api", headerName: "API", width: 200, editable: false },
         {
             field: "created_at",
             headerName: "Created at",
@@ -42,6 +44,7 @@ function Index({ datakeys }) {
         const formData = new FormData();
         formData.append("token", token);
         formData.append("email", email);
+        formData.append("api", email);
 
         axios
             .post("/keys", formData, {
@@ -117,6 +120,13 @@ function Index({ datakeys }) {
                         placeholder="Nhập Email..."
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Nhập API..."
+                        value={api}
+                        onChange={(e) => setAPI(e.target.value)}
                     />
                     <textarea
                         className="form-control mt-2"
