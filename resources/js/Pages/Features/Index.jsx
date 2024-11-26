@@ -16,8 +16,11 @@ function Index({ features }) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const apiBase = 'http://localhost:8000/api/';
+  const formatCreatedAt = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+};
+  const apiBase = '/';
 
   const submitFeature = () => {
     axios.post(`${apiBase}features`, feature)
@@ -69,7 +72,7 @@ function Index({ features }) {
     { field: 'title', headerName: "Title", width: 150, editable: true },
     { field: 'slug', headerName: "Slug", width: 150, editable: true },
     { field: 'api', headerName: "API Endpoint", width: 200, editable: true },
-    { field: 'created_at', headerName: "Created At", width: 200 },
+    { field: 'created_at', headerName: 'Created at', width: 200, valueGetter: (params) => formatCreatedAt(params)}
   ];
 
   return (

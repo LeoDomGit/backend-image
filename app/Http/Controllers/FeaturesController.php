@@ -6,6 +6,7 @@ use App\Http\Requests\FeatureRequest;
 use App\Models\Features;
 use App\Traits\HasCrud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class FeaturesController extends Controller
 {
@@ -19,6 +20,14 @@ class FeaturesController extends Controller
 
     }
 
+    public function store (FeatureRequest $request){
+        $data=$request->all();
+        $data['slug']=Str::slug($request->title);
+        $data['created_at']=now();
+        $this->model::create($data);
+        $data=$this->model::all();
+        return response()->json(['check'=>true,'data'=>$data]);
+    }
     // This will use the UserRequest for validation
     public function update(FeatureRequest $request, $id)
     {
