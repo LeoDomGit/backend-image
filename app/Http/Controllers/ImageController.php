@@ -65,7 +65,90 @@ class ImageController extends Controller
 
         $this->client = new Client();
     }
+    public function getGenerate(Request $request){
+        if(!$request->has('id')){
+            return response()->json(['check'=>false,'msg'=>'id is required']);
+        }
+        while (true) { // Infinite loop to check status
+        $getResponse = Http::withHeaders([
+            'X-Picsart-API-Key' => $this->picsart,
+            'accept' => 'application/json',
+        ])->get("https://genai-api.picsart.io/v1/text2image/inferences/{$request->id}");
 
+        $data = $getResponse->json();
+
+        if ($data['status'] === "FINISHED") {
+            // Extract the first URL from the data array
+            $url = $data['data'][0]['url'] ?? null;
+
+            if ($url) {
+                return response()->json([
+                    'check' => true,
+                    'url' => $url,
+                ]);
+            }
+
+            return response()->json([
+                'check' => false,
+                'message' => 'No URL found in the response data.',
+            ]);
+        }
+
+        // Optional: Add a sleep to avoid spamming the API too frequently
+        sleep(2); // Wait 2 seconds before the next request
+    }
+    }
+
+    public function generateImage(Request $request)
+    {
+        if(!$request->has('prompt')){
+            return response()->json(['check'=>false,'msg'=>'Prompt is required']);
+        }
+
+        $response = Http::withHeaders([
+            'X-Picsart-API-Key' => $this->picsart,
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+        ])->post('https://genai-api.picsart.io/v1/text2image', [
+            'prompt' => $request->prompt,
+            'count' => 1,
+
+        ]);
+        $data = $response->json();
+            $inferenceId=$data['inference_id'];
+            sleep(3);
+            while (true) { // Infinite loop to check status
+                $getResponse = Http::withHeaders([
+                    'X-Picsart-API-Key' => $this->picsart,
+                    'accept' => 'application/json',
+                ])->get("https://genai-api.picsart.io/v1/text2image/inferences/{$inferenceId}");
+                $data = $getResponse->json();
+                if ($data['status'] === "FINISHED") {
+                    // Extract the first URL from the data array
+                    $url = $data['data'][0]['url'] ?? null;
+
+                    if ($url) {
+                        return response()->json([
+                            'check' => true,
+                            'url' => $url,
+                        ]);
+                    }
+
+                    return response()->json([
+                        'check' => false,
+                        'message' => 'No URL found in the response data.',
+                    ]);
+                }
+
+                // Optional: Add a sleep to avoid spamming the API too frequently
+                sleep(2); // Wait 2 seconds before the next request
+            }
+        if ($response->successful()) {
+
+
+        }
+
+    }
     /**
      * Display a listing of the resource.
      */

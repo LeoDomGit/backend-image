@@ -22,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/image',[ImageController::class,'image']);
 Route::post('/removebackground',[ImageController::class,'RemoveBackground']);
 
+Route::post('/generate',[ImageController::class,'generateImage']);
+// Route::post('/getGenerate',[ImageController::class,'getGenerate']);
