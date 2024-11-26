@@ -86,25 +86,25 @@ jobs:
             echo "error_output=No errors captured." >> $GITHUB_ENV
           fi
 
-  notify:
-    name: Discord Notification
-    runs-on: ubuntu-latest
-    needs:
-      - web-deploy
-    if: ${{ always() }} # Always notify, regardless of success or failure
+  # notify:
+  #   name: Discord Notification
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - web-deploy
+  #   if: ${{ always() }} # Always notify, regardless of success or failure
 
-    steps:
-      - name: Notify Discord
-        uses: nobrayner/discord-webhook@v1
-        with:
-          github-token: ${{ secrets.TOKEN }}
-          discord-webhook: ${{ secrets.WEBHOOK }}
-          username: "GitHub Bot Actions"
-          avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
-          title: "Deploy Status: ${{ job.status }}"
-          description: |
-            Build and deploy to GitHub Pages: ${{ job.status }}.
-            Error output (if any): ${{ env.error_output }}
-          color-success: '#4287f5'
-          color-failure: '#eb4034'
-          color-cancelled: '#42daf5'
+  #   steps:
+  #     - name: Notify Discord
+  #       uses: nobrayner/discord-webhook@v1
+  #       with:
+  #         github-token: ${{ secrets.TOKEN }}
+  #         discord-webhook: ${{ secrets.WEBHOOK }}
+  #         username: "GitHub Bot Actions"
+  #         avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
+  #         title: "Deploy Status: ${{ job.status }}"
+  #         description: |
+  #           Build and deploy to GitHub Pages: ${{ job.status }}.
+  #           Error output (if any): ${{ env.error_output }}
+  #         color-success: '#4287f5'
+  #         color-failure: '#eb4034'
+  #         color-cancelled: '#42daf5'
