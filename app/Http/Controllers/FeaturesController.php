@@ -33,6 +33,9 @@ class FeaturesController extends Controller
     {
        $data=$request->validated();
        $data['updated_at']=now();
+        if($request->has('title')){
+            $data['slug']=Str::slug($request->title);
+        }
         $this->model::find($id)->update($data);
         $data=$this->model::all();
         return response()->json(['check'=>true,'data'=>$data]);

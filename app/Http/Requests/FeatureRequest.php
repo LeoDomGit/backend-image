@@ -30,7 +30,7 @@ class FeatureRequest extends FormRequest
             ];
         } else if ($this->isMethod('put') || $this->isMethod('patch')) {
             return [
-                'name'=>'required|unique:features,title',
+                'title'=>'required|unique:features,title',
              ];
         }else if ($this->isMethod('delete')) {
             $feature = Features::find($id);
