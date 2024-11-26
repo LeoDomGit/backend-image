@@ -73,9 +73,138 @@ class ImageController extends Controller
         if (!$request->hasFile('image') || !$request->file('image')->isValid()) {
             return response()->json(['error' => 'No valid file uploaded'], 400);
         }
-            
-    }
 
+        // Retrieve the uploaded file
+        $image = $request->file('image');
+
+        // Create a temporary file path
+        $tempFilePath = $image->getPathname();
+
+        // Send the API request
+        $response = Http::withHeaders([
+            'X-Picsart-API-Key' => $this->picsart,
+            'Accept' => 'application/json',
+        ])->attach(
+            'image', // The name of the file field expected by the API
+            file_get_contents($tempFilePath), // File content
+            $image->getClientOriginalName() // Original file name
+        )->post('https://api.picsart.io/tools/1.0/removebg', [
+            [
+                'name' => 'output_type',
+                'contents' => 'cutout',
+            ],
+            [
+                'name' => 'bg_blur',
+                'contents' => '0',
+            ],
+            [
+                'name' => 'scale',
+                'contents' => 'fit',
+            ],
+            [
+                'name' => 'auto_center',
+                'contents' => 'false',
+            ],
+            [
+                'name' => 'stroke_size',
+                'contents' => '0',
+            ],
+            [
+                'name' => 'stroke_color',
+                'contents' => 'FFFFFF',
+            ],
+            [
+                'name' => 'stroke_opacity',
+                'contents' => '100',
+            ],
+            [
+                'name' => 'shadow',
+                'contents' => 'disabled',
+            ],
+            [
+                'name' => 'shadow_opacity',
+                'contents' => '20',
+            ],
+            [
+                'name' => 'shadow_blur',
+                'contents' => '50',
+            ],
+            [
+                'name' => 'format',
+                'contents' => 'PNG',
+            ],
+        ]);
+
+        // Handle the API response
+        if ($response->successful()) {
+            $data = $response->json();
+            $processedImageUrl = $data['data']['url'];
+            $filename='file'.time();
+            $image = $this->uploadToCloudFlareFromCdn($processedImageUrl,$filename,'removeBackground');
+            return response()->json(['check'=>true,'url'=>$image]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => $response->body(),
+            ], $response->status());
+        }
+    }
+    private function uploadToCloudFlareFromCdn($image_url, $filename, $folder)
+    {
+        try {
+            // Step 1: Prepare Cloudflare R2 credentials and settings
+            $accountid = '453d5dc9390394015b582d09c1e82365';
+            $r2bucket = 'artapp';  // Updated bucket name
+            $accessKey = $this->aws_access_key;
+            $secretKey = $this->aws_secret_key;
+            $region = 'auto';
+            $endpoint = "https://$accountid.r2.cloudflarestorage.com";
+
+            // Set up the S3 client with Cloudflare's endpoint
+            $s3Client = new S3Client([
+                'version' => 'latest',
+                'region' => $region,
+                'credentials' => [
+                    'key' => $accessKey,
+                    'secret' => $secretKey,
+                ],
+                'endpoint' => $endpoint,
+                'use_path_style_endpoint' => true,
+            ]);
+
+            // Step 2: Stream image directly from CDN
+            $imageData = file_get_contents($image_url);
+
+            if ($imageData === false) {
+                // Handle download error
+                Log::error('Failed to retrieve image from CDN URL: ' . $image_url);
+                return 'error';
+            }
+
+            // Step 3: Define the object path and name in R2
+            $r2object = $folder . '/' . $filename . '.jpg';
+
+            // Step 4: Upload the file to Cloudflare R2
+            try {
+                $result = $s3Client->putObject([
+                    'Bucket' => $r2bucket,
+                    'Key' => $r2object,
+                    'Body' => $imageData,  // Pass the image content directly from CDN
+                    'ContentType' => 'image/jpeg',
+                ]);
+
+                // Generate the CDN URL using the custom domain
+                $cdnUrl = "https://artapp.promptme.info/$folder/$filename.jpg";
+                return $cdnUrl;
+            } catch (S3Exception $e) {
+                Log::error("Error uploading file: " . $e->getMessage());
+                return 'error: ' . $e->getMessage();
+            }
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return 'error';
+        }
+    }
     /**
      * Display a listing of the resource.
      */
