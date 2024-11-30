@@ -232,6 +232,78 @@ class ImageController extends Controller
             ], $response->status());
         }
     }
+
+    public function removeBackgroundURL($image)
+    {
+        $response = Http::withHeaders([
+            'X-Picsart-API-Key' => $this->picsart,
+            'Accept' => 'application/json',
+        ])->asMultipart()->post('https://api.picsart.io/tools/1.0/removebg', [
+            [
+                'name' => 'output_type',
+                'contents' => 'cutout',
+            ],
+            [
+                'name' => 'bg_blur',
+                'contents' => '0',
+            ],
+            [
+                'name' => 'scale',
+                'contents' => 'fit',
+            ],
+            [
+                'name' => 'auto_center',
+                'contents' => 'false',
+            ],
+            [
+                'name' => 'stroke_size',
+                'contents' => '0',
+            ],
+            [
+                'name' => 'stroke_color',
+                'contents' => 'FFFFFF',
+            ],
+            [
+                'name' => 'stroke_opacity',
+                'contents' => '100',
+            ],
+            [
+                'name' => 'shadow',
+                'contents' => 'disabled',
+            ],
+            [
+                'name' => 'shadow_opacity',
+                'contents' => '20',
+            ],
+            [
+                'name' => 'shadow_blur',
+                'contents' => '50',
+            ],
+            [
+                'name' => 'format',
+                'contents' => 'PNG',
+            ],
+            [
+                'name' => 'image_url',
+                'contents' => $image,
+            ],
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $image_url=$data['data']['url'];
+            $folder='RemoveBackground';
+            $filename=time().'.png';
+            return $this->uploadToCloudFlareFromCdn($image_url,$folder,$filename);
+
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to process image',
+                'error' => $response->json(),
+            ], 400);
+        }
+    }
     private function uploadToCloudFlareFromCdn($image_url, $filename, $folder)
     {
         try {
@@ -296,7 +368,7 @@ class ImageController extends Controller
         //
     }
     private function uploadToCloudFlareFromFile($filePath, $folder, $filename)
-{
+    {
     try {
         // Step 1: Prepare Cloudflare R2 credentials and settings
         $accountid = '453d5dc9390394015b582d09c1e82365';
@@ -369,8 +441,6 @@ class ImageController extends Controller
         if ($response->successful()) {
             // Get the response data
             $data = $response->json();
-
-            // Retrieve the 'uid' from the response data
             $uid = $data['data']['uid'];
             $transformResponse = Http::post('https://api-service.vanceai.com/web_api/v1/transform', [
                 'api_token' => $this->key,  // Use your token here
@@ -424,13 +494,11 @@ class ImageController extends Controller
 
                     // Delete the temporary local file
                     Storage::disk('public')->delete($storagePath);
-
+                    $remove_bg_url= $this->removeBackgroundURL($cloudflareLink);
                     // Return the response with details
                     return response()->json([
-                        'message' => 'AI-generated image uploaded and successfully stored in Cloudflare',
-                        'uid' => $uid,
-                        'trans_id' => $transId,
-                        'url' => $cloudflareLink, // Cloudflare URL of the uploaded file
+                        'bg_url' => $cloudflareLink,
+                        'url' => $remove_bg_url,
                     ]);
                 } else {
                     // Handle error if transform API request fails
