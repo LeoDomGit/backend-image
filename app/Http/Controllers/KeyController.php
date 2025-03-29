@@ -54,8 +54,14 @@ class KeyController extends Controller
      */
     public function index()
     {
-        $keys = Key::all();
-        return Inertia::render('Key/Index', ['datakeys' => $keys]);
+$vaiceai = Key::where('api', 'vanceai')->count();
+$picsart = Key::where('api', 'picsart')->count();
+$keys = Key::all(); 
+return Inertia::render('Key/Index', [
+    'datakeys' => $keys,
+    'vaiceai' => $vaiceai,
+    'picsart' => $picsart,
+]);
     }
 
     /**
