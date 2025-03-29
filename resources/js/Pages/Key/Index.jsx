@@ -22,7 +22,12 @@ function Index({ datakeys }) {
     };
 
     const columns = [
-        { field: "id", headerName: "#", width: 100 },
+        {
+            field: "id",
+            headerName: "#",
+            width: 100,
+            valueGetter: (params) => params.api.getRowIndex(params.id) + 1
+        },
         { field: "token", headerName: "Token", width: 200, editable: true },
         { field: "email", headerName: "Email", width: 200, editable: true },
         { field: "api", headerName: "API", width: 200, editable: true },
