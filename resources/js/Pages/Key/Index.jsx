@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-function Index({ datakeys }) {
+function Index({ datakeys, vaiceai, picsart }) {
     const [data, setData] = useState(datakeys);
     const [token, setToken] = useState("");
     const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ function Index({ datakeys }) {
             field: "id",
             headerName: "#",
             width: 100,
-            valueGetter: (params) => params.api.getRowIndex(params.id) + 1
+            valueGetter: (params) => params.api.getRowIndex(params.id) + 1,
         },
         { field: "token", headerName: "Token", width: 200, editable: true },
         { field: "email", headerName: "Email", width: 200, editable: true },
@@ -35,13 +35,13 @@ function Index({ datakeys }) {
             field: "created_at",
             headerName: "Created at",
             width: 200,
-            valueGetter: (params) => formatCreatedAt(params),
+            valueGetter: (params) => formatCreatedAt(params.row.created_at),
         },
         {
             field: "updated_at",
             headerName: "Updated at",
             width: 200,
-            valueGetter: (params) => formatCreatedAt(params),
+            valueGetter: (params) => formatCreatedAt(params.row.updated_at),
         },
     ];
 
@@ -69,44 +69,9 @@ function Index({ datakeys }) {
                     toast.error(res.data.msg);
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
             });
-    };
-
-    const handleEdit = (id, field, value) => {
-        if (field === "token" && value === "") {
-            Swal.fire({
-                icon: "warning",
-                text: "Bạn muốn xóa Token này?",
-                showCancelButton: true,
-                confirmButtonText: "Có",
-                cancelButtonText: "Không",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    axios.delete(`/keys/${id}`).then((res) => {
-                        if (res.data.check) {
-                            toast.success("Xóa thành công");
-
-                            setData((prev) =>
-                                prev.filter((item) => item.id !== id)
-                            );
-                        } else {
-                            toast.error(res.data.msg);
-                        }
-                    });
-                }
-            });
-        } else {
-            axios.put(`/keys/${id}`, { [field]: value }).then((res) => {
-                if (res.data.check) {
-                    toast.success("Chỉnh sửa thành công");
-                   setData(res.data.data)
-                } else {
-                    toast.error(res.data.msg);
-                }
-            });
-        }
     };
 
     return (
@@ -174,13 +139,6 @@ function Index({ datakeys }) {
                                     pageSizeOptions={[5]}
                                     checkboxSelection
                                     disableRowSelectionOnClick
-                                    onCellEditStop={(params, e) =>
-                                        handleEdit(
-                                            params.row.id,
-                                            params.field,
-                                            e.target.value
-                                        )
-                                    }
                                 />
                             </Box>
                         </div>
@@ -188,7 +146,13 @@ function Index({ datakeys }) {
                 </div>
             </div>
 
-            {/* ToastContainer for displaying toast notifications */}
+            {/* Display vaiceai and picsart counts below the table */}
+            <div className="mt-4 p-3 bg-light border rounded">
+                <h5>Thống kê API</h5>
+                <p><strong>VanceAI:</strong> {vaiceai}</p>
+                <p><strong>PicsArt:</strong> {picsart}</p>
+            </div>
+
             <ToastContainer />
         </Layout>
     );
