@@ -24,3 +24,4 @@ Route::post('/removebackground',[ImageController::class,'RemoveBackground']);
 
 Route::post('/generate',[ImageController::class,'generateImage']);
 // Route::post('/getGenerate',[ImageController::class,'getGenerate']);
+Route::post('/image/process', [ImageController::class, 'process']);
