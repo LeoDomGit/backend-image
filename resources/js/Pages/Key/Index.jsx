@@ -147,15 +147,12 @@ function Index({ datakeys, vaiceai, picsart }) {
             </div>
 
             {/* Display vaiceai and picsart counts below the table */}
-           <div className="mt-4 p-3 bg-light border rounded">
+            <div className="mt-4 p-3 bg-light border rounded">
                 <h5>Thống kê API</h5>
-                <p><strong>VanceAI:</strong> {vaiceai}</p>
-                <p><strong>PicsArt:</strong> {picsart}</p>
+                <p><strong>VanceAI:</strong> {vaiceai || 0}</p>
+                <p><strong>PicsArt:</strong> {picsart || 0}</p>
             </div>
             <ToastContainer />
-
-             
-
         </Layout>
     );
 }
